@@ -7,7 +7,8 @@ from tkinter import *
 
 def start_loop():
     global stop
-    global file
+    global temp_array
+    global time_array
     stop = True
     rm = pyvisa.ResourceManager()
     print(rm)
@@ -18,20 +19,26 @@ def start_loop():
     timelabel = "t"
     num = 1
     start_time = time.time()
+    temp_array = []
+    time_array = []
     while  stop:
         DMM.write(':SENS:FUNC:OFF:ALL')
         temp = round((float(DMM.query(':READ?').strip())), 3)
         print(templabel+str(num)+": "+str(temp))
+        temp_array.append(temp)
         elapsed_time = round((time.time() - start_time), 3)
         print(timelabel+str(num)+": "+str(elapsed_time))
+        time_array.append(elapsed_time)
         num = num + 1
         time.sleep(0.5)
     
 def end_loop():
     global stop
-    global file
+    global temp_array
+    global time_array
+    print(temp_array)
+    print(time_array)
     stop = False
-    print(file.read())
             
 
 temprecord = Tk()
