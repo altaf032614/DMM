@@ -6,6 +6,13 @@ import matplotlib.pyplot as plot
 import numpy as np
 
 
+def dataplot(x, y):
+    fig, ax = plot.subplots()
+    ax.set_xlabel("time(seconds)")
+    ax.set_ylabel("temperature(C)")
+    ax.set_title("Temperature over Time")
+    ax.plot(x, y)
+    plot.show()
 
 def start_loop():
     global stop
@@ -41,9 +48,7 @@ def end_loop():
     stop = False
     print(temp_array)
     print(time_array)
-    fig, ax = plot.subplots()
-    ax.plot(time_array, temp_array)
-    plot.show()
+    dataplot(time_array, temp_array)
 
 
 
