@@ -2,6 +2,8 @@ import pyvisa
 import time
 from threading import Thread
 from tkinter import *
+import matplotlib.pyplot as plot
+import numpy as np
 
 
 
@@ -30,16 +32,20 @@ def start_loop():
         print(timelabel+str(num)+": "+str(elapsed_time))
         time_array.append(elapsed_time)
         num = num + 1
-        time.sleep(0.5)
+        time.sleep(1)
     
 def end_loop():
     global stop
     global temp_array
     global time_array
+    stop = False
     print(temp_array)
     print(time_array)
-    stop = False
-            
+    fig, ax = plot.subplots()
+    ax.plot(time_array, temp_array)
+    plot.show()
+
+
 
 temprecord = Tk()
 temprecord.geometry("600x500")
