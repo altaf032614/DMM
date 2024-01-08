@@ -1,27 +1,18 @@
-# Approach 1: Declare file variables in the global scope
-file1 = open('file1.txt', 'w')
-file2 = open('file2.txt', 'w')
+import numpy as np
+import matplotlib.pyplot as plt
 
-def function1():
-    global file1
-    file1.write("Data from function1\n")
-    file1.close()
+# Step 1: Read data from files
+file1_path = 'time.txt'  # replace with your file path
+file2_path = 'temp.txt'  # replace with your file path
 
-def function2():
-    global file2
-    file2.write("Data from function2\n")
-    file2.close()
+# Assuming the files have two columns (x and y)
+x_data = np.loadtxt(file1_path)
+y_data = np.loadtxt(file2_path)
 
-def read_files():
-    global file1, file2
-    with open('file1.txt', 'r') as file1, open('file2.txt', 'r') as file2:
-        content1 = file1.read()
-        content2 = file2.read()
-        print(content1, content2)
-
-# Call functions
-function1()
-function2()
-
-# Close files when done
-read_files()
+# Step 2: Plot the data
+plt.plot(x_data, y_data, label='Line Graph')
+plt.xlabel('X-axis Label')
+plt.ylabel('Y-axis Label')
+plt.title('Line Graph Example')
+plt.legend()
+plt.show()

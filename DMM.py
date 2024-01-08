@@ -2,21 +2,24 @@ import pyvisa
 import time
 from threading import Thread
 from tkinter import *
-import matplotlib.pyplot as plot
+import matplotlib.pyplot as plt
 import numpy as np
 
 
-'''
-def dataplot(x, y):
-    fig, ax = plot.subplots()
-    ax.set_xlabel("time(seconds)")
-    ax.set_ylabel("temperature(C)")
-    ax.set_title("Temperature over Time")
-    ax.plot(x, y)
-    plot.show()
-'''
 temp_file = open('temp.txt', 'a')
 time_file = open('time.txt', 'a')
+
+def dataplot():
+    x_file = 'time.txt'
+    y_file = 'temp.txt'
+    x_values = np.loadtxt(x_file)
+    y_values = np.loadtxt(y_file)
+    plt.plot(x_values, y_values)
+    plt.xlabel("time(seconds)")
+    plt.ylabel("temperature(C)")
+    plt.title("Temperature over Time")
+    plt.show()
+
 
 def start_loop():
     global temp_file
@@ -54,7 +57,7 @@ def end_loop():
         time_content = time_file.read()
         print(temp_content)
         print(time_content)
-    #dataplot(time_array, temp_array)
+    dataplot()
 
 
 
