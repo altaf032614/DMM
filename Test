@@ -1,8 +1,27 @@
-import matplotlib.pyplot as plt
-import numpy as np
+# Approach 1: Declare file variables in the global scope
+file1 = open('file1.txt', 'w')
+file2 = open('file2.txt', 'w')
 
-time_array = [1, 2, 3, 5]
-temp_array = [1, 5, 3, 2]
-fig, ax = plt.subplots()  # a figure with a single Axes
-ax.plot(time_array, temp_array)
-plt.show()
+def function1():
+    global file1
+    file1.write("Data from function1\n")
+    file1.close()
+
+def function2():
+    global file2
+    file2.write("Data from function2\n")
+    file2.close()
+
+def read_files():
+    global file1, file2
+    with open('file1.txt', 'r') as file1, open('file2.txt', 'r') as file2:
+        content1 = file1.read()
+        content2 = file2.read()
+        print(content1, content2)
+
+# Call functions
+function1()
+function2()
+
+# Close files when done
+read_files()

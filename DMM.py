@@ -6,6 +6,7 @@ import matplotlib.pyplot as plot
 import numpy as np
 
 
+'''
 def dataplot(x, y):
     fig, ax = plot.subplots()
     ax.set_xlabel("time(seconds)")
@@ -13,11 +14,14 @@ def dataplot(x, y):
     ax.set_title("Temperature over Time")
     ax.plot(x, y)
     plot.show()
+'''
+temp_file = open('temp.txt', 'a')
+time_file = open('time.txt', 'a')
 
 def start_loop():
+    global temp_file
+    global time_file
     global stop
-    global temp_array
-    global time_array
     stop = True
     rm = pyvisa.ResourceManager()
     print(rm)
@@ -28,27 +32,29 @@ def start_loop():
     timelabel = "t"
     num = 1
     start_time = time.time()
-    temp_array = []
-    time_array = []
-    while  stop:
+    while stop:
         DMM.write(':SENS:FUNC:OFF:ALL')
         temp = round((float(DMM.query(':READ?').strip())), 3)
         print(templabel+str(num)+": "+str(temp))
-        temp_array.append(temp)
+        temp_file.write(f'{temp}\n')
         elapsed_time = round((time.time() - start_time), 3)
         print(timelabel+str(num)+": "+str(elapsed_time))
-        time_array.append(elapsed_time)
+        time_file.write(f'{elapsed_time}\n')
         num = num + 1
         time.sleep(1)
+
     
 def end_loop():
     global stop
-    global temp_array
-    global time_array
+    global temp_file
+    global time_file
     stop = False
-    print(temp_array)
-    print(time_array)
-    dataplot(time_array, temp_array)
+    with open('temp.txt', 'r') as temp_file, open('time.txt', 'r') as time_file:
+        temp_content = temp_file.read()
+        time_content = time_file.read()
+        print(temp_content)
+        print(time_content)
+    #dataplot(time_array, temp_array)
 
 
 
