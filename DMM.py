@@ -2,6 +2,7 @@ import pyvisa
 import time
 from threading import Thread
 from tkinter import *
+import os
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -19,6 +20,8 @@ def dataplot():
     plt.ylabel("temperature(C)")
     plt.title("Temperature over Time")
     plt.show()
+    os.remove(x_file)
+    os.remove(y_file)
 
 
 def start_loop():
