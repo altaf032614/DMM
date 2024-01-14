@@ -1,66 +1,63 @@
 import pyvisa
-import time
 from threading import Thread
 from tkinter import *
-import os
+from matplotlib.animation import FuncAnimation
 import matplotlib.pyplot as plt
 import numpy as np
 
 
-temp_file = open('temp.txt', 'a')
-time_file = open('time.txt', 'a')
-
-def dataplot():
-    x_file = 'time.txt'
-    y_file = 'temp.txt'
-    x_values = np.loadtxt(x_file)
-    y_values = np.loadtxt(y_file)
-    plt.plot(x_values, y_values)
-    plt.xlabel("time(seconds)")
-    plt.ylabel("temperature(C)")
-    plt.title("Temperature over Time")
-    plt.show()
-    os.remove(x_file)
-    os.remove(y_file)
-
-
 def start_loop():
-    global temp_file
-    global time_file
-    global stop
-    stop = True
-    rm = pyvisa.ResourceManager()
-    print(rm)
-    rm_id = pyvisa.ResourceManager().list_resources()
-    print(rm_id)
-    DMM = rm.open_resource('USB0::0x05E6::0x2110::1423039::INSTR')
-    templabel = "temp"
-    timelabel = "t"
-    num = 1
-    start_time = time.time()
-    while stop:
-        DMM.write(':SENS:FUNC:OFF:ALL')
-        temp = round((float(DMM.query(':READ?').strip())), 3)
-        print(templabel+str(num)+": "+str(temp))
-        temp_file.write(f'{temp}\n')
-        elapsed_time = round((time.time() - start_time), 3)
-        print(timelabel+str(num)+": "+str(elapsed_time))
-        time_file.write(f'{elapsed_time}\n')
-        num = num + 1
-        time.sleep(1)
+    global run
+    run = True
+    if run:
+        rm = pyvisa.ResourceManager()
+        print(rm)
+        rm_id = pyvisa.ResourceManager().list_resources()
+        print(rm_id)
+        DMM = rm.open_resource('USB0::0x05E6::0x2110::1423039::INSTR')
+        #DMM data retrieval
+        def get_dmm_data():
+            DMM.write(':SENS:FUNC:OFF:ALL')
+            temp = round((float(DMM.query(':READ?').strip())), 3)
+            return temp
+
+        # Initialize variables for the plot
+        x_data = []
+        y_data = []
+
+        # Set up the figure and axis
+        fig, ax = plt.subplots()
+        line, = ax.plot([], [], lw=1)
+
+        # Set the axis limits
+        ax.set_xlim(0, 50)
+        ax.set_ylim(-25, 50)
+
+        # Update function for the animation
+        def update(frame):
+            # Get data from DMM
+            y = get_dmm_data()
+
+            # Append data to lists
+            x_data.append(frame)
+            y_data.append(y)
+
+            # Update the line data
+            line.set_data(x_data, y_data)
+
+            return line,
+
+    # Create the animation
+    ani = FuncAnimation(fig, update, frames=range(100), blit=True, interval=500)
+
+    # Show the plot
+    plt.show()
 
     
 def end_loop():
-    global stop
-    global temp_file
-    global time_file
-    stop = False
-    with open('temp.txt', 'r') as temp_file, open('time.txt', 'r') as time_file:
-        temp_content = temp_file.read()
-        time_content = time_file.read()
-        print(temp_content)
-        print(time_content)
-    dataplot()
+    global run
+    run = False
+    plt.close()
 
 
 
